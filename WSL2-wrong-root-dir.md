@@ -41,7 +41,27 @@ Watchpack Error (initial scan): Error: EACCES: permission denied, lstat '/mnt/c/
 Watchpack Error (initial scan): Error: EACCES: permission denied, lstat '/mnt/c/swapfile.sys'
 
 **Wont see file changes**
+
 ----------------------------------------------------------------
+
+## When the current working directory root File System Type is ext4 instead of 9p (Win10 NTFS)
+
+### How to get started
+
+1. Open WindowsTerminal, launching WSL2 Ubunut
+```
+$ pwd
+/mnt/c/Users/martin
+```
+the default file system is 9p (Win10 NTFS)
+
+```
+$ cd                           <----  Important Step (Switches to WSL networked file system and Linux HOME)
+$ pwd
+/home/mjackson
+
+```
+Now the default file system is ext4
 
 npm start
 
@@ -80,7 +100,7 @@ modules by path ./node_modules/react-dom/ 875 KiB
 webpack 5.4.0 compiled successfully in 2824 ms
 ℹ ｢wdm｣: Compiled successfully.
 ...
-**src/ExampleHooks.js**
+**src/ExampleHooks.js modified**
 ...
 ℹ ｢wdm｣: Compiling...
 ℹ ｢wdm｣: assets by status 2.59 MiB [cached] 1 asset
@@ -91,3 +111,43 @@ runtime modules 3.85 KiB 7 modules
 ./src/ExampleHooks.js 3.4 KiB [built] [code generated]
 webpack 5.4.0 compiled successfully in 131 ms
 ℹ ｢wdm｣: Compiled successfully.
+
+
+[Microsoft warns about propper way to access files](https://docs.microsoft.com/en-us/windows/wsl/compare-versions)
+## For example, when storing your WSL project files:
+
+- Use the Linux file system root directory: \\wsl$\Ubuntu-18.04\home\<user name>\Project
+- Not the Windows file system root directory: C:\Users\<user name>\Project
+
+### How to open Win10 File Explorer in your current directory
+```
+explorer.exe .
+```
+
+#### For Example
+
+open WSL2/Ubuntu WindowTerminal
+
+```
+$ pwd
+/mnt/c/Users/martin            <----   Windows User's HOME
+$ cd                           <----  Important Step (Switches to WSL networked file system and Linux HOME)
+$ pwd
+/home/mjackson
+$ cd test/planet-bob
+cd
+pwd
+/home/mjackson/test/planet-bob
+explorer.exe .
+```
+reveals \\wsl$\Ubuntu\home\mjackson\test\planet-bob
+
+## There is a HUGE performance change when webpack thinks the / is \\wsl$\Ubuntu vs. / in /mnt/c/Users
+
+File System Type is everything
+```
+$ findmnt -n -o FSTYPE -T /
+ext4
+$ findmnt -n -o FSTYPE -T /mnt/c/
+9p
+```
