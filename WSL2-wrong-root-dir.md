@@ -42,3 +42,52 @@ Watchpack Error (initial scan): Error: EACCES: permission denied, lstat '/mnt/c/
 
 **Wont see file changes**
 ----------------------------------------------------------------
+
+npm start
+
+> bob@1.0.0 start
+> pwd ; webpack serve
+
+/home/mjackson/test/planet-bob
+
+**********************************
+* if running hotloader use
+*      http://localhost:8080
+*  expect API services on
+*      http://localhost:8081
+**********************************
+ℹ ｢wds｣: Project is running at http://0.0.0.0:8080/
+ℹ ｢wds｣: webpack output is served from /assets/
+ℹ ｢wds｣: Content not from webpack is served from /home/mjackson/test/planet-bob/public
+ℹ ｢wds｣: 404s will fallback to public/index.html
+ℹ ｢wdm｣: asset vendor.js 2.59 MiB [emitted] (name: vendor) (id hint: commons) 1 related asset
+asset main.js 88.7 KiB [emitted] (name: main) 1 related asset
+Entrypoint main 2.67 MiB (2.85 MiB) = vendor.js 2.59 MiB main.js 88.7 KiB 2 auxiliary assets
+runtime modules 3.85 KiB 7 modules
+modules by path ./node_modules/core-js/ 380 KiB 380 modules
+modules by path ./node_modules/webpack-dev-server/ 21.2 KiB 12 modules
+modules by path ./src/*.js 69.9 KiB 5 modules
+modules by path ./node_modules/html-entities/lib/*.js 57.9 KiB 4 modules
+modules by path ./node_modules/scheduler/ 31.8 KiB 4 modules
+modules by path ./node_modules/webpack/hot/ 1.58 KiB 3 modules
+modules by path ./node_modules/url/ 37.4 KiB 3 modules
+modules by path ./node_modules/querystring/*.js 4.51 KiB 3 modules
+modules by path ./node_modules/react/ 70.6 KiB 2 modules
+modules by path ./node_modules/react-dom/ 875 KiB
+  ./node_modules/react-dom/index.js 1.33 KiB [built] [code generated]
+  ./node_modules/react-dom/cjs/react-dom.development.js 874 KiB [built] [code generated]
+7 modules
+webpack 5.4.0 compiled successfully in 2824 ms
+ℹ ｢wdm｣: Compiled successfully.
+...
+**src/ExampleHooks.js**
+...
+ℹ ｢wdm｣: Compiling...
+ℹ ｢wdm｣: assets by status 2.59 MiB [cached] 1 asset
+asset main.js 88.7 KiB [emitted] (name: main) 1 related asset
+Entrypoint main 2.67 MiB (2.85 MiB) = vendor.js 2.59 MiB main.js 88.7 KiB 2 auxiliary assets
+cached modules 2.34 MiB [cached] 424 modules
+runtime modules 3.85 KiB 7 modules
+./src/ExampleHooks.js 3.4 KiB [built] [code generated]
+webpack 5.4.0 compiled successfully in 131 ms
+ℹ ｢wdm｣: Compiled successfully.
