@@ -1,19 +1,5 @@
 /* eslint react/prop-types: 0 */
 
-
-/***********************************************
-    ?. proposed optional chaining
-    npm install @babel/plugin-proposal-optional-chaining --save-dev
-    {
-      "plugins": [
-        "@babel/plugin-proposal-optional-chaining"
-      ]
-    }
-
-    npm install babel-eslint --save-dev
-
-************************************************/
-
 import React, { useState, useEffect } from 'react';
 
 // for Testing outside of simple-widgets

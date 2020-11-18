@@ -1,5 +1,18 @@
 
 
+/***********************************************
+    ?. proposed optional chaining
+    npm install @babel/plugin-proposal-optional-chaining --save-dev
+    {
+      "plugins": [
+        "@babel/plugin-proposal-optional-chaining"
+      ]
+    }
+
+    npm install babel-eslint --save-dev
+
+************************************************/
+
 Win10 Version 2004 (OS Build 19041.572)
 Win10 Version 20H2 (OS Build 19042.630)
 [] GitBash
