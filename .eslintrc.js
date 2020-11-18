@@ -1,4 +1,5 @@
 module.exports = {
+  "parser": "babel-eslint",
   "env": {
     "es6": true,
     "browser": true,
@@ -14,7 +15,8 @@ module.exports = {
   },
   'plugins': [ 'react', 'react-hooks' ],
   rules: {
-    semi: 'off',
+    'strict': 0,
+    'semi': 'off',
     'no-console': 'off',
     'react/jsx-filename-extension': 'off',
     'react-hooks/rules-of-hooks': 'error',

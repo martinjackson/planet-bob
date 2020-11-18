@@ -1,13 +1,42 @@
-
 /* eslint react/prop-types: 0 */
 
-import React, { useState, useEffect, Fragment } from 'react';
 
-import { CheckBox, Choice,isInvalid, setInvalidScreen, copyStyle,
+/***********************************************
+    ?. proposed optional chaining
+    npm install @babel/plugin-proposal-optional-chaining --save-dev
+    {
+      "plugins": [
+        "@babel/plugin-proposal-optional-chaining"
+      ]
+    }
+
+    npm install babel-eslint --save-dev
+
+************************************************/
+
+import React, { useState, useEffect } from 'react';
+
+// for Testing outside of simple-widgets
+import { CheckBox, Choice, isInvalid, setInvalidScreen, copyStyle,
          validStyling, processStyleScreen, wasClickedScreen,
-         AlertModal, Theme
-       } from 'simple-widgets';
+         AlertModal,
+         defaultThemeSettings,
+         generateButton } from 'simple-widgets';
 
+import { buttonStyle as defaultButtonStyle } from 'simple-widgets';     // TODO rename inside simple-widgets
+
+/*
+// when inside simple-widgets
+
+import CheckBox from './CheckBox';
+import { Choice } from './List';
+import { isInvalid, setInvalidScreen, copyStyle,
+         validStyling, processStyleScreen, wasClickedScreen} from './Invalid'
+import AlertModal from './AlertModal';
+import { defaultThemeSettings, buttonStyle as defaultButtonStyle, generateButton } from './Theme';
+import './table.css';
+import './mousehover.css';
+*/
 
 const upper = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'];
 const lower = [...'abcdefghijklmnopqrstuvwxyz'];
@@ -24,19 +53,101 @@ const hasProperty = (obj, propName) => { return !!Object.getOwnPropertyDescripto
  ****************************************************************************/
 const SearchSortTable = (propsPassed) => {
 
-  const defaultEachRowInTable = (row, i) => {
-        const cols = row.map( (cell, j) => {
-            const k = i+'_'+j
-          return (<td key={k}>{cell}</td>)
-        })
-        // console.log('cols:', cols);
-    return (<tr key={i}>{cols}</tr>)
-  }
+    const Theme = {...defaultThemeSettings, ...props?.Theme};   // ?. proposed optional chaining
 
-  const defaultProps = {
-    error: false,          // Indicates that an error has occrred
-    MAX_ITEMS: 10,
-    eachRowInTable: defaultEachRowInTable,
+    const defaultEachRowInTable = (row, i) => {
+          const cols = row.map( (cell, j) => {
+              const k = i+'_'+j
+            return (<td key={k}>{cell}</td>)
+          })
+          // console.log('cols:', cols);
+      return (<tr key={i}>{cols}</tr>)
+    }
+
+    const defaultProps = {
+      error: false,          // Indicates that an error has occrred
+      MAX_ITEMS: 10,
+      eachRowInTable: defaultEachRowInTable,
+      buttonStyle: defaultButtonStyle,
+      footStyle: {
+                  margin: "10px",
+                  textAlign: "right",
+                  position: "sticky",
+                  bottom: 0,
+                  zIndex: 2,
+                  backgroundColor: Theme.backgroundColor,
+                },
+      divStyle: {
+                  border: "2px solid black",
+                  borderRadius: "10px",
+                  textAlign: "center",
+                  margin: "5px",
+                  padding: "10px",
+                  backgroundColor: Theme.backgroundColor,  // "#CCCC66",
+                },
+      footerStyle: {
+                  textAlign: "center",
+                  fontWeight: "bold",
+                  fontSize: "20px",
+                  border: "1px solid black",
+      },
+      noButtonStyle: {
+                margin: "10px",
+                padding: "0px",
+                border: "none",
+                background: "none",
+                fontWeight: "bold",
+                color: "black"
+      },
+      marginStyle: {
+              marginTop: "10px",
+              marginBottom: "10px",
+              marginLeft: "10px",
+              marginRight: "30px",
+      },
+      noBorderStyle: {
+              margin: "10px",
+              padding: "0px",
+              border: "none",
+              background: "none",
+      },
+      tableStyle: {  // The style for the table
+              margin: "auto",
+              border: "1px solid black",
+              position: "relative",
+      },
+      centerBoldStyle: {
+            textAlign: "center",
+            fontWeight: "bold",
+            fontSize: "20px"
+      },
+      scrollStyle: {
+          display: "block",
+          overflow: "scroll",
+          height: props?.height || "auto",
+          width: props?.width || "auto",
+          border: "1px solid black",
+          marginLeft: "auto",
+          marginRight: "auto"
+      },
+      headerStyle: {
+        position: "sticky",
+        flexDirection: "column",
+        top: 0,
+        zIndex: 2,
+        border: "1px solid black",
+        backgroundColor: Theme.backgroundColor,
+      },
+      widthStyle: {
+        marginBottom: "0px",
+        paddingBottom: "0px",
+        width: "99%",
+        textAlign: "center",
+      },
+      defaultSearchStyle: {
+        margin: "5px",
+        backgroundColor: Theme.normalColor,
+      },
     }
 
     const props = Object.assign(defaultProps, propsPassed);
@@ -54,7 +165,10 @@ const SearchSortTable = (propsPassed) => {
 
     // Set the state variables
     const [start, setStart] = useState(0);
-    const [end, setEnd] = useState((hasProperty(props,'showAll') === true) ? props.data.length : props.MAX_ITEMS);
+    const [end, setEnd]           = useState((hasProperty(props,'showAll') === true) ? props.data.length : props.MAX_ITEMS);
+    const [maxItems, setMaxItems] = useState((hasProperty(props,'showAll') === true) ? props.data.length : props.MAX_ITEMS);   // Maximum number of rows to display in the table
+    const [maximum, setMaximum]   = useState((hasProperty(props,'showAll') === true) ? props.data.length : props.MAX_ITEMS);   // Maximum number of rows selected by the user to display in the table
+
     const [searchItem, setSearchItem] = useState('');                   // The item to search for
     const [searchHeader, setSearchHeader] = useState('');               // The column to search
     const [searchHeaderValues, setSearchHeaderValues] = useState([searchHeader]); // The value of each header in the table -- intialize array to include default value
@@ -64,8 +178,6 @@ const SearchSortTable = (propsPassed) => {
     const [nextDisabled, setNextDisabled] = useState(false);            // Indicates whether the next button is disabled or not
     const [bottomDisabled, setBottomDisabled] = useState(false);        // Indicates whether the bottom button is disabled or not
     const [rowValues, setRowValues] = useState([]);                     // Indicates how many rows in the table should be displayed
-    const [maxItems, setMaxItems] = useState((hasProperty(props,'showAll') === true) ? props.data.length : props.MAX_ITEMS);   // Maximum number of rows to display in the table
-    const [maximum, setMaximum] = useState((hasProperty(props,'showAll') === true) ? props.data.length : props.MAX_ITEMS);     // Maximum number of rows selected by the user to display in the table
     const [filter, setFilter] = useState([]);                           // The values for each column to be filtered
     const [filterOn, setFilterOn] = useState('');                       // Indicates whether the user has checked the Filter On check box or not
     const [copyData, setCopyData] = useState([...props.data]);          // Copies the main data to another storage area
@@ -86,20 +198,8 @@ const SearchSortTable = (propsPassed) => {
      *
      ******************************************************************************/
 
-/*
-   Style 1
-*/
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      useEffect (populateSearch, []);    // only do this when component mounts
-
-/*
-   Style 2
-
-    useEffect (() => {
-      populateSearch();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);    // only do this when component mounts
-*/
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect (populateSearch, []);    // only do this when component mounts
 
     useEffect (() => {
       setCopyData([...props.data]);
@@ -178,131 +278,16 @@ const SearchSortTable = (propsPassed) => {
      *
      **************************************************************************************************/
     // The style used to render the search bar and table
-    let divStyle = {
-        border: "2px solid black",
-        borderRadius: "10px",
-        textAlign: "center",
-        margin: "5px",
-        padding: "10px",
-        backgroundColor: Theme.getBackgroundColor(),  // "#CCCC66",
-    };
 
-    if (hasProperty(props,'divStyle') === true) {
-        divStyle = props.divStyle;
-    }
 
-    let buttonStyle = {
-        margin: "10px",
-        borderRadius: "10px",
-        color: Theme.getButtonFGColor(),
-        backgroundColor: Theme.getButtonBGColor(),
-        width: "100px",
-        height: "30px",
-        font: Theme.getButtonFont(),
-        fontWeight: "bold",
-    }
+    let tableDivStyle = props?.scrollStyle || {};
 
-    if (hasProperty(props,'buttonStyle') === true) {
-        buttonStyle = props.buttonStyle;
-    }
-
-    const noButtonStyle = {
-        margin: "10px",
-        padding: "0px",
-        border: "none",
-        background: "none",
-        fontWeight: "bold",
-        color: "black"
-    }
-
-    const marginStyle = {
-        marginTop: "10px",
-        marginBottom: "10px",
-        marginLeft: "10px",
-        marginRight: "30px",
-    }
-
-    const noBorderStyle = {
-        margin: "10px",
-        padding: "0px",
-        border: "none",
-        background: "none",
-    }
-
-    let tableStyle = {  // The style for the table
-        margin: "auto",
-        border: "1px solid black",
-        position: "relative",
-    }
-
-    if (hasProperty(props,'tableStyle') === true) {
-        tableStyle = props.tableStyle;
-    }
-
-    let centerBoldStyle = {
-        textAlign: "center",
-        fontWeight: "bold",
-        fontSize: "20px"
-    }
-
-    if (hasProperty(props,'headerStyle') === true) {
-        centerBoldStyle = props.headerStyle;
-    }
-
-    let footerStyle = {
-        textAlign: "center",
-        fontWeight: "bold",
-        fontSize: "20px",
-        border: "1px solid black",
-    }
-
-    if (hasProperty(props,'footerStyle') === true) {
-        footerStyle = props.footerStyle;
-    }
-
-    let scrollStyle = {
-        display: "block",
-        overflow: "scroll",
-        height: (hasProperty(props,'height') == true) ? props.height : "auto",
-        width: (hasProperty(props,'width') == true) ? props.width : "auto",
-        border: "1px solid black",
-        marginLeft: "auto",
-        marginRight: "auto"
-    }
-
-    let tableDivStyle = {};
-    if (hasProperty(props,'scroll') === true) {
-        if (hasProperty(props,'scrollStyle') === true) {
-            tableDivStyle = props.scrollStyle;
-        } else {
-            tableDivStyle = scrollStyle;
-        }
-    }
-
-    let searchStyle = {
-        margin: "5px",
-        backgroundColor: Theme.getNormalBackColor(),
-    }
-
-    let footStyle = {
-        margin: "10px",
-        textAlign: "right",
-        position: "sticky",
-        bottom: 0,
-        zIndex: 2,
-        backgroundColor: Theme.getBackgroundColor(),
-    }
-
-    if (hasProperty(props,'footStyle') === true) {
-        footStyle = props.footStyle;
-    }
-
-    const genButtonStyle         = Theme.generateButton(buttonStyle,   props.error, false, 'gray');
-    const genTopButtonStyle      = Theme.generateButton(noButtonStyle, props.error, topDisabled, 'gray');
-    const genPreviousButtonStyle = Theme.generateButton(noButtonStyle, props.error, previousDisabled, 'gray');
-    const genNextButtonStyle     = Theme.generateButton(noButtonStyle, props.error, nextDisabled, 'gray');
-    const genBottomButtonStyle   = Theme.generateButton(noButtonStyle, props.error, bottomDisabled, 'gray');
-    const genFilterButtonStyle   = Theme.generateButton(buttonStyle,   props.error, filterDisabled, 'gray');
+    const genButtonStyle         = generateButton(props.buttonStyle,   props.error, false, 'gray');
+    const genTopButtonStyle      = generateButton(props.noButtonStyle, props.error, topDisabled, 'gray');
+    const genPreviousButtonStyle = generateButton(props.noButtonStyle, props.error, previousDisabled, 'gray');
+    const genNextButtonStyle     = generateButton(props.noButtonStyle, props.error, nextDisabled, 'gray');
+    const genBottomButtonStyle   = generateButton(props.noButtonStyle, props.error, bottomDisabled, 'gray');
+    const genFilterButtonStyle   = generateButton(props.buttonStyle,   props.error, filterDisabled, 'gray');
 
     const topSymbol = '|\u2BC7';        // Bar and left triangle
     const previousSymbol = '\u2BC7';    // Left triangle
@@ -390,18 +375,18 @@ const SearchSortTable = (propsPassed) => {
     }
 
     const filterSection = (hasProperty(props,'nofilter') === true) ? null :
-        <Fragment>
+        (<>
             <CheckBox selectedValue="Y" name="filterOn" text="&nbsp;&nbsp;&nbsp;Filter On" value={filterOn} onChange={(event) => processFilterOn(event.target.value)} />
             <button name="filter" style={genFilterButtonStyle} onClick={() => filterButton()} disabled={props.error || filterDisabled}>Filter</button>
-        </Fragment>
+        </>)
 
-    searchStyle = processStyleScreen(invalid, SRCHHDR, searchStyle);
+    let searchStyle = processStyleScreen(invalid, SRCHHDR, props.defaultSearchStyle);
 
     let itemStyle = validStyling();
     itemStyle = processStyleScreen(invalid, SRCHITEM, itemStyle)
 
     const searchSection = (hasProperty(props,'nosearch') === true) ? null :
-        <Fragment>
+        (<>
             <span className="checkForError">
                 <Choice choices={searchHeaderValues}  name="searchHeader" value={searchHeader} onChange={(event) => setSearchHeader(event.target.value)} onClick={() => wasClickedScreen(invalid, SRCHHDR, setInvalid)} style={searchStyle} disabled={props.error} />
                 {(isInvalid(invalid[SRCHHDR], -1) === true) ? <span className="errMessage">{invalid[SRCHHDR].message}</span> : null }
@@ -411,13 +396,13 @@ const SearchSortTable = (propsPassed) => {
                 {(isInvalid(invalid[SRCHITEM], -1) === true) ? <span className="errMessage">{invalid[SRCHITEM].message}</span> : null }
             </span>
             <button name="searchButtonName" style={genButtonStyle} onClick={() => searchItemButton()} disabled={props.error}>Search</button>
-        </Fragment>
+        </>)
 
     const footer = (hasProperty(props,'nofooter') === true) ? null :
-        <div style={footStyle}>
+        <div style={props.footStyle}>
             { (hasProperty(props,'norows') === true) ? null :
-                <span style={marginStyle}>
-                    <Choice choices={rowValues} name="rows" value={maximum} onChange={(event) => processMaxItems(event.target.value)} style={noBorderStyle} disabled={props.error} />
+                <span style={props.marginStyle}>
+                    <Choice choices={rowValues} name="rows" value={maximum} onChange={(event) => processMaxItems(event.target.value)} style={props.noBorderStyle} disabled={props.error} />
                     rows
                 </span>
             }
@@ -458,42 +443,42 @@ const SearchSortTable = (propsPassed) => {
     }
 
     return (    // Render the screen
-        <div style={divStyle}>
+        <div style={props.divStyle}>
             {title}
             <div>
                 { (hasProperty(props,'sfbottom') === false) ?
-                    <Fragment>
+                    (<>
                         {filterSection}
                         {searchSection}
                         {allButtonHTML}
                         {letters}
-                    </Fragment> : null
+                    </>) : null
                 }
             </div>
             { (props.data.length === 0 && hasProperty(props,'showtable') === false) ?
             <div>No Data to Display</div> :
             <div>
                 <div style={tableDivStyle}>
-                    <table style={tableStyle} className={hoverClassName}>
+                    <table style={props.tableStyle} className={hoverClassName}>
                         <tbody>
-                            <tr key="header" style={centerBoldStyle}>
+                            <tr key="header" style={props.centerBoldStyle}>
                                 {props.table.map(buildHeaders)}
                             </tr>
                            { showData.map(props.eachRowInTable) }
                            { (hasProperty(props,'footer') === true) ?
-                                <tr style={footerStyle}>{ props.footer.map(buildFooter) }</tr> : null }
+                                <tr style={props.footerStyle}>{ props.footer.map(buildFooter) }</tr> : null }
                         </tbody>
                     </table>
                 </div>
                 {footer}
                 <div>
                     { (hasProperty(props,'sfbottom') === true) ?
-                        <Fragment>
+                        (<>
                             {filterSection}
                             {searchSection}
                             {allButtonHTML}
                             {letters}
-                        </Fragment> : null
+                        </>) : null
                     }
                 </div>
             </div>
@@ -546,26 +531,6 @@ const SearchSortTable = (propsPassed) => {
         let filterName = row.header + '_filter'
 
 
-        let headerStyle = {
-            position: "sticky",
-            flexDirection: "column",
-            top: 0,
-            zIndex: 2,
-            border: "1px solid black",
-            backgroundColor: Theme.getBackgroundColor(),
-        }
-
-        if (hasProperty(props,'headerStyle') === true) {
-            headerStyle = props.headerStyle;
-        }
-
-        let widthStyle = {
-            marginBottom: "0px",
-            paddingBottom: "0px",
-            width: "99%",
-            textAlign: "center",
-        }
-
         if (props.table[i].sort === true && sortOrder[i] !== 'N') {
             // After the sort was done, it flips the sort order; therefore, if it is
             // now a D, that means it was sorted in ascending order previously.  If
@@ -579,16 +544,16 @@ const SearchSortTable = (propsPassed) => {
 
         // Filter is turned on
         if (filterOn === 'Y' && hasProperty(props,'nofilter') === false) {
-            let filterStyle = copyStyle(widthStyle);
-            filterStyle.backgroundColor = Theme.getNormalBackColor();
+            let filterStyle = copyStyle(props.widthStyle);
+            filterStyle.backgroundColor = Theme.normalColor;
             filterStyle = processStyleScreen(invalid, FILTER, filterStyle);
 
             if (row.sort === false || hasProperty(props,'nosort') === true) { // No sorting, so no onClick handler
                 if (row.search === false) { // No searching on this field, so no filtering on it also
-                    return (<th key={key} style={headerStyle}>{row.header}</th>)  // Display the header only
+                    return (<th key={key} style={props.headerStyle}>{row.header}</th>)  // Display the header only
                 } else {    // Can filter; therefore, display the input field
                     return (
-                        <th key={key} style={headerStyle}>
+                        <th key={key} style={props.headerStyle}>
                             <div>{row.header}</div>
                             <span className="checkForError">
                                 <input type="text" style={filterStyle} name={filterName} value={filter[i]} onChange={(event) => processFilter(event.target.value, i)} disabled={props.error} />
@@ -599,13 +564,13 @@ const SearchSortTable = (propsPassed) => {
             } else {    // Sorting on the column is allowed
                 if (row.search === false) { // No searching or filtering on the column, so display header only
                     return (
-                        <th key={key} onClick={() => sortClicked(row.name, 'X')} style={headerStyle}>
+                        <th key={key} onClick={() => sortClicked(row.name, 'X')} style={props.headerStyle}>
                             {header}
                         </th>
                     );
                 } else {    // Searching and filtering is allowed
                     return (    // Display header and input field for filtering
-                        <th key={key} onClick={() => sortClicked(row.name, 'X')} style={headerStyle}>
+                        <th key={key} onClick={() => sortClicked(row.name, 'X')} style={props.headerStyle}>
                             <div>{header}</div>
                             <span className="checkForError">
                                 <input type="text" style={filterStyle} name={filterName} value={filter[i]} onChange={(event) => processFilter(event.target.value, i)} disabled={props.error} />
@@ -616,10 +581,10 @@ const SearchSortTable = (propsPassed) => {
             }
         // Filtering is off or not allowed
         } else if (row.sort === false || hasProperty(props,'nosort') === true) { // No sorting, so no onClick handler
-            return ( <th key={key} style={headerStyle}>{row.header}</th> ); // Display the header only
+            return ( <th key={key} style={props.headerStyle}>{row.header}</th> ); // Display the header only
         } else {    // Soring on the column is allowed
             return (
-                <th key={key} onClick={() => sortClicked(row.name, 'X')} style={headerStyle}>
+                <th key={key} onClick={() => sortClicked(row.name, 'X')} style={props.headerStyle}>
                     {header}
                 </th>
             );
@@ -638,7 +603,7 @@ const SearchSortTable = (propsPassed) => {
         let key = 'footer_' + i;
 
         return (    // Place a value in the column
-            <td key={key} style={footerStyle}>{row}</td>
+            <td key={key} style={props.footerStyle}>{row}</td>
         )
     }
 
