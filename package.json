@@ -7,8 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "prestart": "node directory-check.js '/mnt/*' 'propose pre flight check for webpack (dont run on /mnt/c)' ",
-    "start": "pwd ; webpack serve",
+    "start": "webpack serve",
     "watch": "webpack --watch --progress",
     "build": "webpack"
   },

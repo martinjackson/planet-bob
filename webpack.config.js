@@ -102,6 +102,8 @@ function configInfo() {
     // TODO: test webpack arguements for server and --watch
 
     const cwd = process.cwd();
+    console.log(cwd);
+
     if (cwd.startsWith('/mnt/')) {
       console.error('PROBLEM: Win10 file system accessed from WSL.')
       console.error('WARNING: Initial build will be 6x-8x SLOWER !!!')
