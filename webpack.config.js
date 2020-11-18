@@ -98,13 +98,27 @@ let info = {
 };
 
 function configInfo() {
+    // test if pwd starts with /mnt/c or /mnt/d
+    // TODO: test webpack arguements for server and --watch
+
+    const cwd = process.cwd();
+    if (cwd.startsWith('/mnt/')) {
+      console.error('PROBLEM: Win10 file system accessed from WSL.')
+      console.error('WARNING: Initial build will be 6x-8x SLOWER !!!')
+      console.error('ERROR: programs watching for file changes will not be notified!')
+      console.error('       webpack serve      affected')
+      console.error('       webpack --watch    affected')
+      console.error('       webpack            Initial build: 6x-8x SLOWER')
+      console.error('SOLUTION: access project through Linux file system.')
+      console.error('SOLUTION: cd ~/path/to/project (not cd /mnt/c/path/to/project)')
+      process.exit(-1);
+    }
+
     console.log('');
-    console.log('**********************************');
-    console.log('* if running hotloader use ');
-    console.log(`*      http://localhost:${info.devServer.port}  `);
-    console.log('*  expect API services on  ');
-    console.log(`*      http://localhost:${API_PORT}  `);
-    console.log('**********************************');
+    console.log('*********************************************************************');
+    console.log(`* if running hotloader use    http://localhost:${info.devServer.port}  `);
+    console.log(`*  expect API services on     http://localhost:${API_PORT}  `);
+    console.log('*********************************************************************');
 
   return info
 }
