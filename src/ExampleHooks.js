@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react'
 const ExampleHooks = (props) => {
 
   const [from, setFrom] = useState("...")
-  const when = '2020-11-18 11:42'
+  const when = '2020-11-18 14:35'
 
   useEffect(() => {
     setTimeout(() => setFrom('React Hooks'), 3000);

@@ -105,15 +105,21 @@ function configInfo() {
     console.log(cwd);
 
     if (cwd.startsWith('/mnt/')) {
-      console.error('PROBLEM: Win10 file system accessed from WSL.')
+      console.error('----------------------------------------------------------------------')
+      console.error('--  PROBLEM: Win10 file system accessed from WSL.                   --')
+      console.error('--  SOLUTION: access project through Linux file system.             --')
+      console.error('--  SOLUTION: cd ~/path/to/project (not cd /mnt/c/path/to/project)  --')
+      console.error('----------------------------------------------------------------------')
+      process.exit(-1);
+
+      /*
+      the information below is repeatable, but not always
       console.error('WARNING: Initial build will be 6x-8x SLOWER !!!')
       console.error('ERROR: programs watching for file changes will not be notified!')
       console.error('       webpack serve      affected')
       console.error('       webpack --watch    affected')
       console.error('       webpack            Initial build: 6x-8x SLOWER')
-      console.error('SOLUTION: access project through Linux file system.')
-      console.error('SOLUTION: cd ~/path/to/project (not cd /mnt/c/path/to/project)')
-      process.exit(-1);
+      */
     }
 
     console.log('');
