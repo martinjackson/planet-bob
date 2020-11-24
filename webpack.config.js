@@ -1,5 +1,4 @@
 const path = require('path');
-// const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 const CONSTANTS = require('./constants');
 
@@ -70,7 +69,7 @@ let info = {
             plugins: [
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-proposal-optional-chaining',
-              [ "@babel/plugin-proposal-class-properties", {"loose": true} ]
+              [ '@babel/plugin-proposal-class-properties', {"loose": true} ]
             ]
           }
         }
@@ -92,35 +91,15 @@ let info = {
   },
 
   plugins: [
+    // const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
     // new BundleAnalyzerPlugin()       // uncomment if you want to see graphs of sizes, runs continually
   ],
 
 };
 
 function configInfo() {
-    // test if pwd starts with /mnt/c or /mnt/d
-    // TODO: test webpack arguements for server and --watch
-
     const cwd = process.cwd();
     console.log(cwd);
-
-    if (cwd.startsWith('/mnt/')) {
-      console.error('----------------------------------------------------------------------')
-      console.error('--  PROBLEM: Win10 file system accessed from WSL.                   --')
-      console.error('--  SOLUTION: access project through Linux file system.             --')
-      console.error('--  SOLUTION: cd ~/path/to/project (not cd /mnt/c/path/to/project)  --')
-      console.error('----------------------------------------------------------------------')
-      process.exit(-1);
-
-      /*
-      the information below is repeatable, but not always
-      console.error('WARNING: Initial build will be 6x-8x SLOWER !!!')
-      console.error('ERROR: programs watching for file changes will not be notified!')
-      console.error('       webpack serve      affected')
-      console.error('       webpack --watch    affected')
-      console.error('       webpack            Initial build: 6x-8x SLOWER')
-      */
-    }
 
     console.log('');
     console.log('*********************************************************************');

@@ -12,6 +12,9 @@ $ npm -v
 $ node -v
 v14.15.0
 
+npx create-simple-react new-dir
+
+
 $ cd
 $ mkdir test
 $ cd test

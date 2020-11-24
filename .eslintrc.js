@@ -1,3 +1,13 @@
+
+/*
+  https://github.com/testing-library/eslint-plugin-testing-library
+  rules: {
+    "testing-library/await-async-query": "error",
+    "testing-library/no-await-sync-query": "error",
+    "testing-library/no-debug": "warn",
+  }
+
+*/
 module.exports = {
   "parser": "babel-eslint",
   "env": {
@@ -5,7 +15,12 @@ module.exports = {
     "browser": true,
     "node": true,
   },
-  extends: ['eslint:recommended', 'plugin:react/recommended'],
+  extends: [
+      'eslint:recommended',
+      'plugin:react/recommended',
+      "plugin:testing-library/recommended",
+      "plugin:testing-library/react",
+    ],
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": 'module',
@@ -13,7 +28,7 @@ module.exports = {
       'jsx': true,
     },
   },
-  'plugins': [ 'react', 'react-hooks' ],
+  'plugins': [ 'react', 'react-hooks', "testing-library" ],
   rules: {
     'strict': 0,
     'semi': 'off',

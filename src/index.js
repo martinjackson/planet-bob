@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-// import {SearchSortTable} from 'simple-widgets'
-import SearchSortTable from './SearchSortTable'
+import {SearchSortTable} from 'simple-widgets'
+import SearchSortTable2 from './SearchSortTable'
 
 // Why does SearchSortTable need this ???
 require("core-js/stable");                    // instead of @babel/polyfill
@@ -50,8 +50,13 @@ const ExampleTable = (props) => {
   return <SearchSortTable data={tableData} table={colsInfo} {...props} />
 }
 
+const ExampleTable2 = (props) => {
+  return <SearchSortTable2 data={tableData} table={colsInfo} {...props} />
+}
+
 const App = () => <div style={AlignStyle}>
     <ExampleTable />
+    <ExampleTable2 />
     <ExampleClass style={kid} />
     <ExampleHooks style={kid} />
     <RecordView style={kid2} />

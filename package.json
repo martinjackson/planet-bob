@@ -28,6 +28,7 @@
     "eslint": "^7.13.0",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-testing-library": "^3.10.1",
     "regenerator-runtime": "^0.13.7",
     "sass": "^1.29.0",
     "sass-loader": "^10.1.0",
@@ -41,6 +42,6 @@
     "dotenv": "^8.2.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "simple-widgets": "^1.6.1"
+    "simple-widgets": "^1.7.2"
   }
 }

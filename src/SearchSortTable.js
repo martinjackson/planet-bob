@@ -266,7 +266,15 @@ const SearchSortTable = (propsPassed) => {
     // The style used to render the search bar and table
 
 
-    let tableDivStyle = props?.scrollStyle || {};
+    let tableDivStyle = {};
+    if (hasProperty(props,'scroll') === true) {
+        if (hasProperty(props,'scrollStyle') === true) {
+            tableDivStyle = props.scrollStyle;
+        } else {
+            tableDivStyle = defaultProps.scrollStyle;
+        }
+    }
+
 
     const genButtonStyle         = generateButton(props.buttonStyle,   props.error, false, 'gray');
     const genTopButtonStyle      = generateButton(props.noButtonStyle, props.error, topDisabled, 'gray');
